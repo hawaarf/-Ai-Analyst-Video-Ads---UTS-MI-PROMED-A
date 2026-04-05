@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vireon Insight - Video Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 50%, #312e81 100%);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: #f8fafc;
+            overflow-x: hidden;
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.25rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+        .glass-highlight {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(99, 102, 241, 0.05) 100%);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            border-radius: 1.25rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+        .drop-zone {
+            border: 2px dashed rgba(96, 165, 250, 0.4);
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.3s ease;
+        }
+        .drop-zone.dragover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(96, 165, 250, 0.8);
+            transform: scale(1.01);
+        }
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-up {
+            animation: fadeUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes pulseGlow {
+            0%, 100% { box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.8); }
+        }
+        .btn-glow {
+            animation: pulseGlow 2s infinite;
+        }
+        @keyframes spinSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .spinner-custom {
+            animation: spinSlow 1.5s linear infinite;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <div class="bg-indigo-600/80 backdrop-blur-md text-white text-center py-2 px-4 text-xs tracking-wider font-semibold uppercase sticky top-0 z-50 shadow-md">
+        This is not an official platform. This tool is created for educational and analytical purposes only.
+    </div>
+
+    <header class="pt-10 pb-6 px-6 max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/30">
+                <i data-lucide="play-square" class="w-6 h-6 text-white"></i>
+            </div>
+            <div>
+                <h1 class="text-2xl font-extrabold tracking-tight text-white">Vireon Insight</h1>
+                <p class="text-blue-300 text-sm font-medium">Video Advertisement Intelligence Dashboard</p>
+            </div>
+        </div>
+        <div class="bg-white/10 px-4 py-2 rounded-full border border-white/10 flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+            <span class="text-xs font-semibold text-blue-100 uppercase tracking-wider">System Online</span>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-6 pb-20">
+
+        <section id="module-upload" class="animate-fade-up">
+            <div class="glass-card p-10 flex flex-col items-center justify-center text-center mt-6">
+                <h2 class="text-xl font-bold text-white mb-2">Module 1: Video Upload & Processing</h2>
+                <p class="text-blue-200 text-sm mb-8">Upload your MP4 advertisement file to extract deep marketing insights.</p>
+                
+                <div id="drop-area" class="drop-zone w-full max-w-2xl rounded-2xl p-12 cursor-pointer flex flex-col items-center justify-center group hover:bg-white/5">
+                    <div class="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                        <i data-lucide="upload-cloud" class="w-8 h-8 text-blue-400"></i>
+                    </div>
+                    <p class="text-lg font-bold text-white mb-1">Drag and drop your video here</p>
+                    <p class="text-sm text-blue-300 mb-6">MP4 format, maximum 50MB</p>
+                    <button class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-semibold py-2.5 px-6 rounded-xl transition-colors">
+                        Browse Files
+                    </button>
+                    <input type="file" id="file-input" accept=".mp4" class="hidden">
+                </div>
+            </div>
+        </section>
+
+        <section id="module-preview" class="hidden animate-fade-up">
+            <div class="glass-card p-8 mt-6 flex flex-col items-center max-w-3xl mx-auto">
+                <div class="w-full flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-lg font-bold text-white">Video Ready for Analysis</h2>
+                        <p class="text-sm text-blue-300" id="file-name-display">video_file.mp4</p>
+                    </div>
+                    <div class="bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-3 py-1 rounded-lg text-xs font-bold flex items-center gap-1.5">
+                        <i data-lucide="check-circle-2" class="w-4 h-4"></i> Uploaded
+                    </div>
+                </div>
+                
+                <div class="w-full rounded-xl overflow-hidden bg-black/50 border border-white/10 mb-8 aspect-video flex items-center justify-center relative shadow-2xl">
+                    <video id="video-player" class="w-full h-full object-contain" controls></video>
+                </div>
+
+                <button id="btn-analyze" class="w-full sm:w-auto bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold text-lg py-3.5 px-10 rounded-xl transition-all transform hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 btn-glow">
+                    <i data-lucide="cpu" class="w-5 h-5"></i> Analyze Video
+                </button>
+            </div>
+        </section>
+
+        <div id="loading-overlay" class="hidden fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex-col items-center justify-center">
+            <div class="relative w-24 h-24 mb-6">
+                <div class="absolute inset-0 border-4 border-blue-500/20 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-blue-500 rounded-full border-t-transparent spinner-custom"></div>
+                <i data-lucide="brain-circuit" class="absolute inset-0 m-auto w-8 h-8 text-blue-400"></i>
+            </div>
+            <h2 class="text-2xl font-bold text-white mb-2">Extracting Intelligence</h2>
+            <p class="text-blue-300 text-sm font-medium animate-pulse">Running computer vision and NLP models...</p>
+        </div>
+
+        <section id="module-results" class="hidden mt-8 space-y-6">
+            
+            <div class="glass-highlight p-8 animate-fade-up" style="animation-delay: 0.1s;">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-blue-500/20 rounded-lg border border-blue-500/30">
+                        <i data-lucide="lightbulb" class="w-6 h-6 text-blue-400"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-white tracking-wide">Key Marketing Insights</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-slate-900/40 p-5 rounded-xl border border-white/5">
+                        <p class="text-xs font-bold text-blue-300 uppercase tracking-widest mb-1">Strongest Branding Element</p>
+                        <p class="text-sm font-medium text-white leading-relaxed">Neon blue visual motif consistently used in background lighting and product packaging.</p>
+                    </div>
+                    <div class="bg-slate-900/40 p-5 rounded-xl border border-white/5">
+                        <p class="text-xs font-bold text-blue-300 uppercase tracking-widest mb-1">Core Emotional Trigger</p>
+                        <p class="text-sm font-medium text-white leading-relaxed">Transition from struggle (dark shadows) to triumphant achievement (bright lighting).</p>
+                    </div>
+                    <div class="bg-slate-900/40 p-5 rounded-xl border border-white/5">
+                        <p class="text-xs font-bold text-blue-300 uppercase tracking-widest mb-1">Most Memorable Scene</p>
+                        <p class="text-sm font-medium text-white leading-relaxed">Slow-motion liquid pour at 0:15 synchronized with the bass drop.</p>
+                    </div>
+                    <div class="bg-slate-900/40 p-5 rounded-xl border border-white/5">
+                        <p class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Strategic Takeaway</p>
+                        <p class="text-sm font-medium text-white leading-relaxed">Hooks viewers within the first 5 seconds using suspense. Highly effective for 6-second skippable ad formats.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <div class="glass-card p-6 animate-fade-up" style="animation-delay: 0.2s;">
+                    <div class="flex justify-between items-start mb-6 border-b border-white/10 pb-4">
+                        <h2 class="text-lg font-bold text-white">Brand & Product</h2>
+                        <span class="bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2 py-1 rounded border border-emerald-500/30 uppercase tracking-wider">High Confidence</span>
+                    </div>
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center shrink-0">
+                            <i data-lucide="zap" class="w-8 h-8 text-yellow-400 fill-yellow-400/20"></i>
+                        </div>
+                        <div>
+                            <p class="text-xs text-blue-300 uppercase font-bold tracking-wider mb-1">Detected Brand</p>
+                            <p class="text-xl font-extrabold text-white">HydraBoost Energy</p>
+                        </div>
+                    </div>
+                    <div class="bg-white/5 p-4 rounded-xl border border-white/5">
+                        <p class="text-xs text-blue-300 uppercase font-bold tracking-wider mb-1">Product Type / Category</p>
+                        <p class="text-base font-medium text-white">Performance Beverage / Sports Nutrition</p>
+                    </div>
+                </div>
+
+                <div class="glass-card p-6 lg:col-span-2 animate-fade-up" style="animation-delay: 0.3s;">
+                    <div class="mb-6 border-b border-white/10 pb-4">
+                        <h2 class="text-lg font-bold text-white">Core Message Extraction</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
+                        <div>
+                            <div class="mb-5">
+                                <p class="text-xs text-blue-300 uppercase font-bold tracking-wider mb-2 flex items-center gap-2"><i data-lucide="message-square" class="w-4 h-4"></i> Main Message</p>
+                                <p class="text-sm font-medium text-slate-200 leading-relaxed bg-white/5 p-4 rounded-xl border border-white/5">
+                                    Push your physical limits and achieve peak performance with clean, sustained energy that helps you overcome any obstacle.
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="mb-5">
+                                <p class="text-xs text-blue-300 uppercase font-bold tracking-wider mb-2 flex items-center gap-2"><i data-lucide="hash" class="w-4 h-4"></i> Official Tagline</p>
+                                <p class="text-lg font-bold text-white italic bg-blue-500/10 p-3 rounded-xl border border-blue-500/20">"Fuel Your Fire."</p>
+                            </div>
+                            <div>
+                                <p class="text-xs text-blue-300 uppercase font-bold tracking-wider mb-2 flex items-center gap-2"><i data-lucide="mouse-pointer-click" class="w-4 h-4"></i> Call-to-Action</p>
+                                <p class="text-sm font-medium text-white bg-indigo-500/10 p-3 rounded-xl border border-indigo-500/20">
+                                    Grab your HydraBoost at local stores or online today.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                
+                <div class="glass-card p-6 animate-fade-up" style="animation-delay: 0.4s;">
+                    <div class="mb-6 border-b border-white/10 pb-4">
+                        <h2 class="text-lg font-bold text-white flex items-center gap-2"><i data-lucide="film" class="w-5 h-5 text-blue-400"></i> Scene & Visual Analysis</h2>
+                    </div>
+                    
+                    <div class="relative border-l-2 border-blue-500/30 ml-3 space-y-8 pb-4 mt-4">
+                        <div class="relative pl-6">
+                            <div class="absolute -left-[9px] top-1 w-4 h-4 bg-slate-900 border-2 border-blue-400 rounded-full"></div>
+                            <h4 class="text-sm font-bold text-white mb-1">0:00 - 0:05 | The Setup</h4>
+                            <p class="text-xs text-blue-200 mb-2">Athlete tying shoes in a dark, atmospheric locker room.</p>
+                            <p class="text-[11px] text-slate-300 bg-white/5 p-2 rounded-lg border border-white/5"><span class="font-bold text-blue-400">Support:</span> Builds intense anticipation and specifically targets the active demographic.</p>
+                        </div>
+                        <div class="relative pl-6">
+                            <div class="absolute -left-[9px] top-1 w-4 h-4 bg-slate-900 border-2 border-blue-400 rounded-full"></div>
+                            <h4 class="text-sm font-bold text-white mb-1">0:05 - 0:15 | The Struggle</h4>
+                            <p class="text-xs text-blue-200 mb-2">Intense workout montage with fast, rhythmic camera cuts.</p>
+                            <p class="text-[11px] text-slate-300 bg-white/5 p-2 rounded-lg border border-white/5"><span class="font-bold text-blue-400">Support:</span> Establishes a high-energy, gritty brand identity.</p>
+                        </div>
+                        <div class="relative pl-6">
+                            <div class="absolute -left-[9px] top-1 w-4 h-4 bg-slate-900 border-2 border-blue-400 rounded-full"></div>
+                            <h4 class="text-sm font-bold text-white mb-1">0:15 - 0:20 | Product Reveal</h4>
+                            <p class="text-xs text-blue-200 mb-2">Opening the HydraBoost can, macro shot of vibrant liquid pour.</p>
+                            <p class="text-[11px] text-slate-300 bg-white/5 p-2 rounded-lg border border-white/5"><span class="font-bold text-blue-400">Support:</span> Pure sensory appeal driving thirst and product desirability.</p>
+                        </div>
+                        <div class="relative pl-6">
+                            <div class="absolute -left-[9px] top-1 w-4 h-4 bg-slate-900 border-2 border-blue-400 rounded-full shadow-[0_0_10px_#60a5fa] bg-blue-400"></div>
+                            <h4 class="text-sm font-bold text-white mb-1">0:20 - 0:30 | The Triumph</h4>
+                            <p class="text-xs text-blue-200 mb-2">Athlete breaking personal record, glowing logo overlay.</p>
+                            <p class="text-[11px] text-slate-300 bg-white/5 p-2 rounded-lg border border-white/5"><span class="font-bold text-blue-400">Support:</span> Strongly associates the product consumption with success and positive emotion.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-6 flex flex-col">
+                    
+                    <div class="glass-card p-6 animate-fade-up" style="animation-delay: 0.5s;">
+                        <div class="mb-4 border-b border-white/10 pb-4">
+                            <h2 class="text-lg font-bold text-white flex items-center gap-2"><i data-lucide="mic" class="w-5 h-5 text-blue-400"></i> Speech & Audio Analysis</h2>
+                        </div>
+                        <div class="space-y-4">
+                            <div>
+                                <p class="text-xs text-blue-300 uppercase font-bold tracking-wider mb-1">Transcript Excerpt</p>
+                                <p class="text-sm font-medium text-slate-300 italic pl-3 border-l-2 border-blue-500/50">
+                                    "You think you've reached your limit? Think again. It's not about the start, it's about the finish. HydraBoost. Fuel Your Fire."
+                                </p>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mt-2">
+                                <div class="bg-white/5 p-3 rounded-xl border border-white/5">
+                                    <p class="text-xs text-blue-300 uppercase font-bold tracking-wider mb-1">Audio Profile</p>
+                                    <p class="text-xs text-white">High-tempo electronic beat building to a deep resonant bass drop. Motivational voiceover.</p>
+                                </div>
+                                <div class="bg-white/5 p-3 rounded-xl border border-white/5">
+                                    <p class="text-xs text-blue-300 uppercase font-bold tracking-wider mb-1">Message Alignment</p>
+                                    <p class="text-xs text-white">Rising tempo mirrors physical exertion. Bass drop perfectly aligns with product reveal.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card p-6 flex-1 animate-fade-up" style="animation-delay: 0.6s;">
+                        <div class="mb-4 border-b border-white/10 pb-4">
+                            <h2 class="text-lg font-bold text-white flex items-center gap-2"><i data-lucide="target" class="w-5 h-5 text-blue-400"></i> Moment & Segment Analysis</h2>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="flex items-center gap-4 bg-white/5 p-3 rounded-xl border border-white/5">
+                                <div class="bg-blue-500 text-white text-xs font-mono font-bold px-2 py-1 rounded">0:15</div>
+                                <div>
+                                    <p class="text-xs font-bold text-blue-300 uppercase">Most Impactful Moment</p>
+                                    <p class="text-sm text-white font-medium">Close-up can opening sound with visual liquid splash.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 bg-white/5 p-3 rounded-xl border border-white/5">
+                                <div class="bg-pink-500 text-white text-xs font-mono font-bold px-2 py-1 rounded">0:22</div>
+                                <div>
+                                    <p class="text-xs font-bold text-pink-300 uppercase">Strongest Emotional Trigger</p>
+                                    <p class="text-sm text-white font-medium">The athlete's triumphant roar after breaking the record.</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-4 bg-white/5 p-3 rounded-xl border border-white/5">
+                                <div class="bg-indigo-500 text-white text-xs font-mono font-bold px-2 py-1 rounded">0:28</div>
+                                <div>
+                                    <p class="text-xs font-bold text-indigo-300 uppercase">Brand Recall Moment</p>
+                                    <p class="text-sm text-white font-medium">Glowing logo and tagline overlay holding screen center.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        const dropArea = document.getElementById('drop-area');
+        const fileInput = document.getElementById('file-input');
+        const moduleUpload = document.getElementById('module-upload');
+        const modulePreview = document.getElementById('module-preview');
+        const videoPlayer = document.getElementById('video-player');
+        const fileNameDisplay = document.getElementById('file-name-display');
+        const btnAnalyze = document.getElementById('btn-analyze');
+        const loadingOverlay = document.getElementById('loading-overlay');
+        const moduleResults = document.getElementById('module-results');
+
+        dropArea.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        dropArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropArea.classList.add('dragover');
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+            dropArea.classList.remove('dragover');
+        });
+
+        dropArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            if (file.type === 'video/mp4') {
+                const fileURL = URL.createObjectURL(file);
+                fileNameDisplay.textContent = file.name;
+                videoPlayer.src = fileURL;
+                
+                moduleUpload.classList.add('hidden');
+                modulePreview.classList.remove('hidden');
+            } else {
+                alert("Please upload a valid MP4 video file.");
+            }
+        }
+
+        btnAnalyze.addEventListener('click', () => {
+            loadingOverlay.classList.remove('hidden');
+            loadingOverlay.classList.add('flex');
+            
+            setTimeout(() => {
+                loadingOverlay.classList.add('hidden');
+                loadingOverlay.classList.remove('flex');
+                
+                modulePreview.classList.add('hidden');
+                
+                moduleResults.classList.remove('hidden');
+                
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            }, 3500);
+        });
+    </script>
+</body>
+</html>
